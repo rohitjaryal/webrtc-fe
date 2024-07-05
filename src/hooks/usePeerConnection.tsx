@@ -4,7 +4,7 @@ import { socket } from '../libs/socket.ts';
 
 export function usePeerConnection(localStream: MediaStream) {
   const { roomName } = useParams();
-  const [guestStream] = useState<MediaStream | null>(null);
+  const [guestStream, setGuestStream] = useState<MediaStream | null>(null);
 
   const peerConnection = useMemo(() => {
     const connection = new RTCPeerConnection({
@@ -13,6 +13,14 @@ export function usePeerConnection(localStream: MediaStream) {
 
     connection.addEventListener('icecandidate', ({ candidate }) => {
       socket.emit('send_candidate', { candidate, roomName });
+    });
+
+    connection.addEventListener('track', ({ streams }) => {
+      setGuestStream(streams[0]);
+    });
+
+    localStream.getTracks().forEach((track) => {
+      connection.addTrack(track, localStream);
     });
 
     // ...

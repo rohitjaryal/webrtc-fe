@@ -14,6 +14,8 @@ export const VideoChatRoom: FunctionComponent<Props> = ({ localStream }) => {
   const { peerConnection, guestStream } = usePeerConnection(localStream);
   useChatConnection(peerConnection);
 
+  console.log('ggg:>', guestStream, localStream);
+
   return (
     <div>
       <VideoFeed mediaStream={localStream} isMuted={true} />
